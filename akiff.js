@@ -15,8 +15,8 @@ app.listen(PORT, () => {
 
 // ===== MINECRAFT BOT CONFIG =====
 const config = {
-  host: 'rexrtx.falixsrv.me',
-  port: 38741,
+  host: 'trexrtl.falixsrv.me',
+  port: 59574,
   username: 'AFK_Bot',
   auth: 'offline',
   reconnectDelay: 5000
