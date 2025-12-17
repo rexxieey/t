@@ -1,7 +1,9 @@
 const mineflayer = require('mineflayer')
 const express = require('express')
 
-// ===== HTTP SERVER (PING) =====
+/* =====================
+   HTTP SERVER (RENDER)
+===================== */
 const app = express()
 const PORT = process.env.PORT || 3000
 
@@ -13,36 +15,43 @@ app.listen(PORT, () => {
   console.log(`🌐 HTTP server running on port ${PORT}`)
 })
 
-// ===== MINECRAFT BOT CONFIG =====
+/* =====================
+   MINECRAFT CONFIG
+===================== */
 const config = {
   host: 'trexrtl.falixsrv.me',
   port: 59574,
   username: 'AFK_Bot',
   auth: 'offline',
+  version: '1.21.8', // REQUIRED for Falix (fixes protocol errors)
   reconnectDelay: 5000
 }
 
 let bot
+let afkInterval
+let chatInterval
 
-function createBot () {
+function startBot () {
+  console.log('⏳ Starting bot...')
+
   bot = mineflayer.createBot({
     host: config.host,
     port: config.port,
     username: config.username,
     auth: config.auth,
-    version: false
+    version: config.version
   })
 
   bot.once('spawn', () => {
-    console.log('✅ Bot connected')
+    console.log('✅ Bot spawned successfully')
 
-    // ===== Anti-AFK Movement =====
-    setInterval(() => {
-      const moves = ['forward', 'back', 'left', 'right']
-      const move = moves[Math.floor(Math.random() * moves.length)]
+    /* ===== Anti-AFK Movement ===== */
+    afkInterval = setInterval(() => {
+      const directions = ['forward', 'back', 'left', 'right']
+      const dir = directions[Math.floor(Math.random() * directions.length)]
 
-      bot.setControlState(move, true)
-      setTimeout(() => bot.setControlState(move, false), 1000)
+      bot.setControlState(dir, true)
+      setTimeout(() => bot.setControlState(dir, false), 800)
 
       bot.look(
         Math.random() * Math.PI * 2,
@@ -51,26 +60,33 @@ function createBot () {
       )
     }, 20000)
 
-    // ===== Auto Chat =====
-    setInterval(() => {
+    /* ===== Auto Chat ===== */
+    chatInterval = setInterval(() => {
       const messages = [
         'AFK',
         'Still online',
-        'Bot running',
-        'Auto AFK'
+        'AFK bot running',
+        'Grinding...'
       ]
       bot.chat(messages[Math.floor(Math.random() * messages.length)])
     }, 120000)
   })
 
-  // ===== AUTO RECONNECT =====
+  /* ===== Auto Reconnect ===== */
   bot.on('end', () => {
     console.log('❌ Disconnected, reconnecting...')
-    setTimeout(createBot, config.reconnectDelay)
+    clearInterval(afkInterval)
+    clearInterval(chatInterval)
+    setTimeout(startBot, config.reconnectDelay)
   })
 
-  bot.on('kicked', r => console.log('⚠️ Kicked:', r))
-  bot.on('error', e => console.log('⚠️ Error:', e))
+  bot.on('kicked', reason => {
+    console.log('⚠️ Kicked:', reason)
+  })
+
+  bot.on('error', err => {
+    console.log('⚠️ Error:', err)
+  })
 }
 
-createBot()
+startBot()
