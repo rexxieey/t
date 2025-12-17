@@ -1,7 +1,7 @@
 {
   "name": "minecraft-afk-bot",
   "version": "1.0.0",
-  "main": "afk.js",
+  "main": "akkif.js",
   "dependencies": {
     "mineflayer": "^4.33.0"
   }
