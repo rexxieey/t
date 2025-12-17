@@ -1,10 +1,24 @@
 const mineflayer = require('mineflayer')
+const express = require('express')
 
+// ===== HTTP SERVER (PING) =====
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.get('/', (req, res) => {
+  res.send('AFK Bot is running ✅')
+})
+
+app.listen(PORT, () => {
+  console.log(`🌐 HTTP server running on port ${PORT}`)
+})
+
+// ===== MINECRAFT BOT CONFIG =====
 const config = {
   host: 'rexrtx.falixsrv.me',
-  port: 25565,
-  username: 'AFK_Bot', // change if name is taken
-  auth: 'offline',    // CRACKED / OFFLINE MODE
+  port: 38741,
+  username: 'AFK_Bot',
+  auth: 'offline',
   reconnectDelay: 5000
 }
 
@@ -20,7 +34,7 @@ function createBot () {
   })
 
   bot.once('spawn', () => {
-    console.log('✅ Connected to rexrtx.falixsrv.me')
+    console.log('✅ Bot connected')
 
     // ===== Anti-AFK Movement =====
     setInterval(() => {
@@ -30,7 +44,6 @@ function createBot () {
       bot.setControlState(move, true)
       setTimeout(() => bot.setControlState(move, false), 1000)
 
-      // Look around
       bot.look(
         Math.random() * Math.PI * 2,
         (Math.random() - 0.5) * Math.PI / 2,
@@ -42,22 +55,22 @@ function createBot () {
     setInterval(() => {
       const messages = [
         'AFK',
-        'Still here',
-        'Online 🙂',
-        'AFK bot running'
+        'Still online',
+        'Bot running',
+        'Auto AFK'
       ]
       bot.chat(messages[Math.floor(Math.random() * messages.length)])
     }, 120000)
   })
 
-  // ===== Auto Reconnect =====
+  // ===== AUTO RECONNECT =====
   bot.on('end', () => {
     console.log('❌ Disconnected, reconnecting...')
     setTimeout(createBot, config.reconnectDelay)
   })
 
-  bot.on('kicked', reason => console.log('⚠️ Kicked:', reason))
-  bot.on('error', err => console.log('⚠️ Error:', err))
+  bot.on('kicked', r => console.log('⚠️ Kicked:', r))
+  bot.on('error', e => console.log('⚠️ Error:', e))
 }
 
 createBot()
