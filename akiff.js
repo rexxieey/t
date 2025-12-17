@@ -20,10 +20,10 @@ app.listen(PORT, () => {
 ===================== */
 const config = {
   host: 'trexrtl.falixsrv.me',
-  port: 59574,
+  port: 59574,          // IMPORTANT (Falix custom port)
   username: 'AFK_Bot',
   auth: 'offline',
-  version: '1.21.8', // REQUIRED for Falix (fixes protocol errors)
+  version: '1.20.4',    // REQUIRED for Falix (no auto-version)
   reconnectDelay: 5000
 }
 
@@ -32,7 +32,7 @@ let afkInterval
 let chatInterval
 
 function startBot () {
-  console.log('⏳ Starting bot...')
+  console.log('⏳ Starting Minecraft bot...')
 
   bot = mineflayer.createBot({
     host: config.host,
